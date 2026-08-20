@@ -15,7 +15,7 @@ export default function Topbar({ title, onMenuClick }) {
           <div className="topbar-user-avatar">HR</div>
           <div className="topbar-user-info">
             <strong>HR Admin</strong>
-            <span>Infosys Demo Workspace</span>
+            <span>PeopleDesk Workspace</span>
           </div>
         </div>
       </div>
