@@ -1,0 +1,258 @@
+{
+  "info": {
+    "name": "Employee Management API",
+    "description": "REST API collection for the Infosys-focused Employee Management System (Spring Boot + JDBC + MySQL). Set the {{baseUrl}} collection variable if your backend runs on a different host/port.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/api" },
+    { "key": "employeeId", "value": "1" },
+    { "key": "departmentId", "value": "1" },
+    { "key": "roleId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Employees",
+      "item": [
+        {
+          "name": "Get All Employees",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/employees", "host": ["{{baseUrl}}"], "path": ["employees"] }
+          }
+        },
+        {
+          "name": "Get Employees Filtered by Department",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/employees?departmentId={{departmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees"],
+              "query": [{ "key": "departmentId", "value": "{{departmentId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Get Employees Filtered by Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/employees?status=ACTIVE",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees"],
+              "query": [{ "key": "status", "value": "ACTIVE" }]
+            }
+          }
+        },
+        {
+          "name": "Get Employees Sorted by Salary Desc",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/employees?sortBy=salary&sortDirection=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees"],
+              "query": [
+                { "key": "sortBy", "value": "salary" },
+                { "key": "sortDirection", "value": "desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Employees by Name",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/employees/search?name=John",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "search"],
+              "query": [{ "key": "name", "value": "John" }]
+            }
+          }
+        },
+        {
+          "name": "Get Employee By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/employees/{{employeeId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "{{employeeId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Employee",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/employees", "host": ["{{baseUrl}}"], "path": ["employees"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeCode\": \"EMP-2001\",\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Verma\",\n  \"email\": \"rahul.verma@infotech-demo.com\",\n  \"phone\": \"9990011223\",\n  \"salary\": 72000.00,\n  \"joiningDate\": \"2024-06-01\",\n  \"departmentId\": 1,\n  \"roleId\": 1,\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/employees/{{employeeId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "{{employeeId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeCode\": \"EMP-2001\",\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Verma\",\n  \"email\": \"rahul.verma@infotech-demo.com\",\n  \"phone\": \"9990011223\",\n  \"salary\": 78000.00,\n  \"joiningDate\": \"2024-06-01\",\n  \"departmentId\": 1,\n  \"roleId\": 2,\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Employee",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/employees/{{employeeId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "{{employeeId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Employee - Duplicate Code (409 example)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/employees", "host": ["{{baseUrl}}"], "path": ["employees"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeCode\": \"EMP-1001\",\n  \"firstName\": \"Duplicate\",\n  \"lastName\": \"Test\",\n  \"email\": \"duplicate.test@infotech-demo.com\",\n  \"phone\": \"9990000000\",\n  \"salary\": 50000.00,\n  \"joiningDate\": \"2024-01-01\",\n  \"departmentId\": 1,\n  \"roleId\": 1,\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Employee - Validation Error (400 example)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/employees", "host": ["{{baseUrl}}"], "path": ["employees"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeCode\": \"\",\n  \"firstName\": \"\",\n  \"lastName\": \"Test\",\n  \"email\": \"not-an-email\",\n  \"phone\": \"123\",\n  \"salary\": -100,\n  \"joiningDate\": \"2024-01-01\",\n  \"departmentId\": 1,\n  \"roleId\": 1,\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Departments",
+      "item": [
+        {
+          "name": "Get All Departments",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/departments", "host": ["{{baseUrl}}"], "path": ["departments"] }
+          }
+        },
+        {
+          "name": "Get Department By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/departments/{{departmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["departments", "{{departmentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Department",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/departments", "host": ["{{baseUrl}}"], "path": ["departments"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"departmentName\": \"Customer Support\",\n  \"description\": \"Handles customer queries and support tickets\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Department",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/departments/{{departmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["departments", "{{departmentId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"departmentName\": \"Engineering\",\n  \"description\": \"Product engineering, platform and application development\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "Get All Roles",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/roles", "host": ["{{baseUrl}}"], "path": ["roles"] }
+          }
+        },
+        {
+          "name": "Get Role By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/roles/{{roleId}}", "host": ["{{baseUrl}}"], "path": ["roles", "{{roleId}}"] }
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/roles", "host": ["{{baseUrl}}"], "path": ["roles"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"QA Engineer\",\n  \"description\": \"Tests software and ensures quality standards\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/roles/{{roleId}}", "host": ["{{baseUrl}}"], "path": ["roles", "{{roleId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"Software Engineer\",\n  \"description\": \"Designs, builds and maintains software applications\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/dashboard/stats", "host": ["{{baseUrl}}"], "path": ["dashboard", "stats"] }
+          }
+        }
+      ]
+    }
+  ]
+}
