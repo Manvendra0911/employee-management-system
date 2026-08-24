@@ -1,0 +1,109 @@
+<div>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Live overview of your workforce, pulled straight from the database.</p>
+    </div>
+    <button class="btn btn-primary" (click)="addEmployee()">+ Add Employee</button>
+  </div>
+
+  @if (loading()) {
+    <app-loading-state [rows]="4" />
+  }
+
+  @if (!loading() && error()) {
+    <app-error-state [description]="error()!" (retry)="load()" />
+  }
+
+  @if (!loading() && !error() && stats(); as s) {
+    <div class="stats-grid">
+      <div class="card stat-card" style="--stat-accent: #2f5fdb">
+        <div class="stat-label">Total Employees</div>
+        <div class="stat-value">{{ s.totalEmployees }}</div>
+      </div>
+      <div class="card stat-card" style="--stat-accent: #187a4c">
+        <div class="stat-label">Active Employees</div>
+        <div class="stat-value">{{ s.activeEmployees }}</div>
+      </div>
+      <div class="card stat-card" style="--stat-accent: #a6690a">
+        <div class="stat-label">Inactive Employees</div>
+        <div class="stat-value">{{ s.inactiveEmployees }}</div>
+      </div>
+      <div class="card stat-card" style="--stat-accent: #7c3aed">
+        <div class="stat-label">Departments</div>
+        <div class="stat-value">{{ s.totalDepartments }}</div>
+      </div>
+      <div class="card stat-card" style="--stat-accent: #0f766e">
+        <div class="stat-label">Roles</div>
+        <div class="stat-value">{{ s.totalRoles }}</div>
+      </div>
+      <div class="card stat-card" style="--stat-accent: #c53030">
+        <div class="stat-label">Average Salary</div>
+        <div class="stat-value">{{ formatCurrency(s.averageSalary) }}</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card card-pad">
+        <div class="panel-title">Employees by Department</div>
+        <div class="panel-subtitle">Headcount distribution across departments</div>
+
+        @if (departmentEntries().length === 0) {
+          <app-empty-state
+            icon="inbox"
+            title="No data yet"
+            description="Add employees to see this breakdown."
+          />
+        } @else {
+          <div>
+            @for (entry of departmentEntries(); track entry[0]) {
+              <div class="dept-bar-row">
+                <div class="dept-bar-label">{{ entry[0] }}</div>
+                <div class="dept-bar-track">
+                  <div
+                    class="dept-bar-fill"
+                    [style.width.%]="(entry[1] / maxDepartmentCount()) * 100"
+                    [style.background]="colorForKey(entry[0])"
+                  ></div>
+                </div>
+                <div class="dept-bar-count">{{ entry[1] }}</div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card card-pad">
+        <div class="panel-title">Recent Employees</div>
+        <div class="panel-subtitle">Most recently added to the system</div>
+
+        @if (!s.recentEmployees || s.recentEmployees.length === 0) {
+          <app-empty-state icon="inbox" title="No employees yet" />
+        } @else {
+          <div>
+            @for (emp of s.recentEmployees; track emp.employeeId) {
+              <div class="recent-list-item">
+                <div class="recent-person">
+                  <div
+                    class="avatar-chip"
+                    [style.background]="colorForKey(emp.departmentName) + '22'"
+                    [style.color]="colorForKey(emp.departmentName)"
+                  >
+                    {{ initials(emp.firstName, emp.lastName) }}
+                  </div>
+                  <div>
+                    <div class="recent-person-name">{{ emp.fullName }}</div>
+                    <div class="recent-person-role">{{ emp.roleName }} · {{ emp.departmentName }}</div>
+                  </div>
+                </div>
+                <span class="mono" style="font-size: 12.5px; color: var(--color-text-secondary)">
+                  {{ formatCurrency(emp.salary) }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

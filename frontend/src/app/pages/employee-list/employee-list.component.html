@@ -1,0 +1,84 @@
+<div>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Employees</h1>
+      <p class="page-subtitle">Search, filter and manage every employee record.</p>
+    </div>
+    <button class="btn btn-primary" (click)="addEmployee()">
+      <app-icon name="plus" /> Add Employee
+    </button>
+  </div>
+
+  <div class="card card-pad" style="margin-bottom: 0">
+    <div class="filter-bar">
+      <div class="search-input">
+        <app-icon name="search" />
+        <input
+          type="text"
+          placeholder="Search by name, code or email…"
+          [(ngModel)]="keyword"
+          (ngModelChange)="onFilterChange()"
+        />
+      </div>
+      <select class="select-filter" [(ngModel)]="departmentId" (ngModelChange)="onFilterChange()">
+        <option value="">All Departments</option>
+        @for (d of departments(); track d.departmentId) {
+          <option [value]="d.departmentId">{{ d.departmentName }}</option>
+        }
+      </select>
+      <select class="select-filter" [(ngModel)]="roleId" (ngModelChange)="onFilterChange()">
+        <option value="">All Roles</option>
+        @for (r of roles(); track r.roleId) {
+          <option [value]="r.roleId">{{ r.roleName }}</option>
+        }
+      </select>
+      <select class="select-filter" [(ngModel)]="status" (ngModelChange)="onFilterChange()">
+        <option value="">All Statuses</option>
+        <option value="ACTIVE">Active</option>
+        <option value="INACTIVE">Inactive</option>
+      </select>
+    </div>
+
+    @if (loading()) {
+      <app-loading-state [rows]="6" />
+    }
+
+    @if (!loading() && error()) {
+      <app-error-state [description]="error()!" (retry)="loadEmployees()" />
+    }
+
+    @if (!loading() && !error() && employees().length === 0) {
+      <app-empty-state
+        icon="inbox"
+        [title]="hasFilters ? 'No employees match these filters' : 'No employees yet'"
+        [description]="
+          hasFilters ? 'Try adjusting your search or filters.' : 'Get started by adding your first employee.'
+        "
+      >
+        @if (!hasFilters) {
+          <button class="btn btn-primary btn-sm" (click)="addEmployee()">+ Add Employee</button>
+        }
+      </app-empty-state>
+    }
+
+    @if (!loading() && !error() && employees().length > 0) {
+      <app-employee-table
+        [employees]="employees()"
+        [sortBy]="sortBy"
+        [sortDirection]="sortDirection"
+        (sortChange)="handleSortChange($event)"
+        (deleteRequest)="requestDelete($event)"
+      />
+    }
+  </div>
+
+  <app-confirm-dialog
+    [open]="!!deleteTarget()"
+    title="Delete this employee?"
+    [description]="deleteDescription"
+    confirmLabel="Delete"
+    [loading]="deleting()"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
+</div>

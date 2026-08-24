@@ -1,0 +1,60 @@
+<div>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Roles</h1>
+      <p class="page-subtitle">Manage the job roles used to categorize employees.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">
+      <app-icon name="plus" /> Add Role
+    </button>
+  </div>
+
+  @if (loading()) {
+    <app-loading-state [rows]="4" />
+  }
+
+  @if (!loading() && error()) {
+    <app-error-state [description]="error()!" (retry)="load()" />
+  }
+
+  @if (!loading() && !error() && roles().length === 0) {
+    <app-empty-state icon="badge" title="No roles yet" description="Create your first role to get started." />
+  }
+
+  @if (!loading() && !error() && roles().length > 0) {
+    <div class="stats-grid">
+      @for (role of roles(); track role.roleId) {
+        <div class="card card-pad">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start">
+            <div>
+              <div style="font-weight: 700; font-size: 15px">{{ role.roleName }}</div>
+              <div style="font-size: 12.5px; color: var(--color-text-muted); margin-top: 4px">
+                {{ role.description || 'No description' }}
+              </div>
+            </div>
+            <button class="btn-icon" title="Edit role" (click)="openEdit(role)">
+              <app-icon name="edit" />
+            </button>
+          </div>
+          <button
+            class="btn btn-ghost btn-sm"
+            style="margin-top: 14px; padding: 6px 0"
+            (click)="viewEmployees(role)"
+          >
+            <app-icon name="users" /> {{ countFor(role) }} employee{{ countFor(role) === 1 ? '' : 's' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <app-name-form-modal
+    [open]="modalOpen()"
+    [title]="editing() ? 'Edit Role' : 'Add Role'"
+    nameLabel="Role Name"
+    [initialValues]="editing() ? { name: editing()!.roleName, description: editing()!.description } : null"
+    [submitting]="submitting()"
+    (submit)="handleSubmit($event)"
+    (cancel)="modalOpen.set(false)"
+  />
+</div>

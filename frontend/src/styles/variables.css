@@ -1,0 +1,67 @@
+/* ==========================================================
+   PeopleDesk Design Tokens
+   Restrained, data-dense "enterprise console" palette.
+   Signature choice: JetBrains Mono for identifiers/figures
+   (employee codes, salary, dates) to visually separate
+   "data" from "prose" the way an internal ops tool would.
+   ========================================================== */
+
+:root {
+  /* Surfaces */
+  --color-bg: #f4f5f8;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f9fafc;
+  --color-border: #e3e6ec;
+  --color-border-strong: #cdd3e0;
+
+  /* Text */
+  --color-text-primary: #1a2233;
+  --color-text-secondary: #5c6577;
+  --color-text-muted: #8991a3;
+  --color-text-inverse: #f5f7fb;
+
+  /* Accent (indigo-blue, used sparingly) */
+  --color-accent: #2f5fdb;
+  --color-accent-dark: #1f3f9e;
+  --color-accent-soft: #eaf0fd;
+
+  /* Status */
+  --color-success: #187a4c;
+  --color-success-soft: #e3f5ea;
+  --color-danger: #c53030;
+  --color-danger-soft: #fbeaea;
+  --color-warning: #a6690a;
+  --color-warning-soft: #fbf0dd;
+
+  /* Sidebar */
+  --sidebar-bg: #10182b;
+  --sidebar-bg-hover: #1b2540;
+  --sidebar-text: #a7afc4;
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #5b8bf5;
+  --sidebar-border: #232d47;
+
+  /* Typography */
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Radii & shadows */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 43, 0.06);
+  --shadow-md: 0 4px 16px rgba(16, 24, 43, 0.08);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 43, 0.14);
+
+  /* Layout */
+  --sidebar-width: 236px;
+  --topbar-height: 64px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

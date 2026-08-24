@@ -1,0 +1,64 @@
+<div>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Departments</h1>
+      <p class="page-subtitle">Organize employees into departments.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">
+      <app-icon name="plus" /> Add Department
+    </button>
+  </div>
+
+  @if (loading()) {
+    <app-loading-state [rows]="4" />
+  }
+
+  @if (!loading() && error()) {
+    <app-error-state [description]="error()!" (retry)="load()" />
+  }
+
+  @if (!loading() && !error() && departments().length === 0) {
+    <app-empty-state
+      icon="building"
+      title="No departments yet"
+      description="Create your first department to get started."
+    />
+  }
+
+  @if (!loading() && !error() && departments().length > 0) {
+    <div class="stats-grid">
+      @for (dept of departments(); track dept.departmentId) {
+        <div class="card card-pad">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start">
+            <div>
+              <div style="font-weight: 700; font-size: 15px">{{ dept.departmentName }}</div>
+              <div style="font-size: 12.5px; color: var(--color-text-muted); margin-top: 4px">
+                {{ dept.description || 'No description' }}
+              </div>
+            </div>
+            <button class="btn-icon" title="Edit department" (click)="openEdit(dept)">
+              <app-icon name="edit" />
+            </button>
+          </div>
+          <button
+            class="btn btn-ghost btn-sm"
+            style="margin-top: 14px; padding: 6px 0"
+            (click)="viewEmployees(dept)"
+          >
+            <app-icon name="users" /> {{ countFor(dept) }} employee{{ countFor(dept) === 1 ? '' : 's' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <app-name-form-modal
+    [open]="modalOpen()"
+    [title]="editing() ? 'Edit Department' : 'Add Department'"
+    nameLabel="Department Name"
+    [initialValues]="editing() ? { name: editing()!.departmentName, description: editing()!.description } : null"
+    [submitting]="submitting()"
+    (submit)="handleSubmit($event)"
+    (cancel)="modalOpen.set(false)"
+  />
+</div>

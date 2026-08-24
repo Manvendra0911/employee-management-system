@@ -1,0 +1,113 @@
+<div>
+  <button class="btn btn-ghost btn-sm" (click)="goBack()" style="margin-bottom: 14px; padding-left: 4px">
+    <app-icon name="arrow-left" /> Back to Employees
+  </button>
+
+  @if (loading()) {
+    <div class="card card-pad">
+      <app-loading-state [rows]="5" />
+    </div>
+  }
+
+  @if (!loading() && error()) {
+    <div class="card card-pad">
+      <app-error-state [description]="error()!" (retry)="load()" />
+    </div>
+  }
+
+  @if (!loading() && !error() && employee(); as emp) {
+    <div class="page-header">
+      <div style="display: flex; align-items: center; gap: 16px">
+        <div
+          class="avatar-circle-lg"
+          [style.background]="colorForKey(emp.departmentName) + '22'"
+          [style.color]="colorForKey(emp.departmentName)"
+        >
+          {{ initials(emp.firstName, emp.lastName) }}
+        </div>
+        <div>
+          <h1 class="page-title">{{ emp.fullName }}</h1>
+          <p class="page-subtitle">{{ emp.roleName }} · {{ emp.departmentName }}</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px">
+        <button class="btn btn-secondary" (click)="editEmployee()">
+          <app-icon name="edit" /> Edit
+        </button>
+        <button class="btn btn-danger" (click)="confirmOpen.set(true)">
+          <app-icon name="trash" /> Delete
+        </button>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card card-pad">
+        <div class="panel-title">Employee Information</div>
+        <div class="panel-subtitle">Core profile details</div>
+
+        <div class="detail-row">
+          <span class="detail-label">Employee Code</span>
+          <span class="detail-value mono">{{ emp.employeeCode }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Status</span>
+          <span class="detail-value"><app-status-badge [status]="emp.status" /></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Email</span>
+          <span class="detail-value" style="display: flex; align-items: center; gap: 6px">
+            <app-icon name="mail" /> {{ emp.email }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Phone</span>
+          <span class="detail-value" style="display: flex; align-items: center; gap: 6px">
+            <app-icon name="phone" /> {{ emp.phone }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Salary</span>
+          <span class="detail-value mono" style="display: flex; align-items: center; gap: 6px">
+            <app-icon name="cash" /> {{ formatCurrency(emp.salary) }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Joining Date</span>
+          <span class="detail-value" style="display: flex; align-items: center; gap: 6px">
+            <app-icon name="calendar" /> {{ formatDate(emp.joiningDate) }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Department</span>
+          <span class="detail-value">{{ emp.departmentName }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Role</span>
+          <span class="detail-value">{{ emp.roleName }}</span>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="panel-title">Record Metadata</div>
+        <div class="panel-subtitle">System-tracked timestamps</div>
+        <div class="detail-row">
+          <span class="detail-label">Created At</span>
+          <span class="detail-value">{{ formatDateTime(emp.createdAt) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Last Updated</span>
+          <span class="detail-value">{{ formatDateTime(emp.updatedAt) }}</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <app-confirm-dialog
+    [open]="confirmOpen()"
+    title="Delete this employee?"
+    [description]="deleteDescription"
+    [loading]="deleting()"
+    (confirm)="handleDelete()"
+    (cancel)="confirmOpen.set(false)"
+  />
+</div>

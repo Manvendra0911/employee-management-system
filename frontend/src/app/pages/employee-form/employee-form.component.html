@@ -1,0 +1,143 @@
+<div>
+  <button class="btn btn-ghost btn-sm" (click)="cancel()" style="margin-bottom: 14px; padding-left: 4px">
+    <app-icon name="arrow-left" /> Back to Employees
+  </button>
+
+  @if (loading()) {
+    <div class="card card-pad">
+      <app-loading-state [rows]="6" />
+    </div>
+  }
+
+  @if (!loading() && loadError()) {
+    <div class="card card-pad">
+      <app-error-state [description]="loadError()!" (retry)="reload()" />
+    </div>
+  }
+
+  @if (!loading() && !loadError()) {
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">{{ isEdit ? 'Edit Employee' : 'Add Employee' }}</h1>
+        <p class="page-subtitle">
+          {{ isEdit ? 'Update the employee record below.' : 'Fill in the details to create a new employee record.' }}
+        </p>
+      </div>
+    </div>
+
+    <form class="card card-pad" [formGroup]="form" (ngSubmit)="handleSubmit()" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label>Employee Code <span class="required">*</span></label>
+          <input formControlName="employeeCode" placeholder="EMP-1016" [class.has-error]="fieldError('employeeCode')" />
+          @if (fieldError('employeeCode'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label>Status <span class="required">*</span></label>
+          <select formControlName="status">
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>First Name <span class="required">*</span></label>
+          <input formControlName="firstName" placeholder="Asha" [class.has-error]="fieldError('firstName')" />
+          @if (fieldError('firstName'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label>Last Name <span class="required">*</span></label>
+          <input formControlName="lastName" placeholder="Rao" [class.has-error]="fieldError('lastName')" />
+          @if (fieldError('lastName'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label>Email <span class="required">*</span></label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="asha.rao&#64;example.com"
+            [class.has-error]="fieldError('email')"
+          />
+          @if (fieldError('email'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label>Phone <span class="required">*</span></label>
+          <input formControlName="phone" placeholder="9876543210" [class.has-error]="fieldError('phone')" />
+          @if (fieldError('phone'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label>Salary (₹ / year) <span class="required">*</span></label>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            formControlName="salary"
+            placeholder="65000"
+            [class.has-error]="fieldError('salary')"
+          />
+          @if (fieldError('salary'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label>Joining Date <span class="required">*</span></label>
+          <input type="date" formControlName="joiningDate" [class.has-error]="fieldError('joiningDate')" />
+          @if (fieldError('joiningDate'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label>Department <span class="required">*</span></label>
+          <select formControlName="departmentId" [class.has-error]="fieldError('departmentId')">
+            <option value="">Select department</option>
+            @for (d of departments(); track d.departmentId) {
+              <option [value]="d.departmentId">{{ d.departmentName }}</option>
+            }
+          </select>
+          @if (fieldError('departmentId'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label>Role <span class="required">*</span></label>
+          <select formControlName="roleId" [class.has-error]="fieldError('roleId')">
+            <option value="">Select role</option>
+            @for (r of roles(); track r.roleId) {
+              <option [value]="r.roleId">{{ r.roleName }}</option>
+            }
+          </select>
+          @if (fieldError('roleId'); as msg) {
+            <div class="field-error">{{ msg }}</div>
+          }
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end">
+        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="submitting()">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+          {{ submitting() ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Employee' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>
