@@ -1,304 +1,103 @@
-# PeopleDesk — Employee Management System
 
-A clean, interview-defensible Java Full Stack Employee Management System,
-built to demonstrate practical **Java + Spring Boot + JDBC + MySQL + Angular**
-skills for a Java Full Stack / Systems Engineer role at Infosys.
 
-> This is a real, running application — not a mockup. Every number on the
-> dashboard, every row in the employee table, and every dropdown option comes
-> from a live REST call to a Spring Boot backend backed by MySQL.
+Readme · MD
+PeopleDesk — Employee Management System
+A full-stack Employee Management System I built to practice (and demonstrate) a real Java + Spring Boot backend paired with an Angular frontend — no shortcuts like JPA/Hibernate on the backend, just plain JDBC so every query is written and explainable by hand.
 
----
+It does what most internal HR tools do: manage employees, departments and roles, with a dashboard giving a quick overview of the workforce.
 
-## Table of Contents
+What it does
+Employees
 
-1. [Project Overview](#project-overview)
-2. [Features](#features)
-3. [Technology Stack](#technology-stack)
-4. [Architecture](#architecture)
-5. [Folder Structure](#folder-structure)
-6. [Database Design](#database-design)
-7. [API Documentation](#api-documentation)
-8. [Setup Instructions](#setup-instructions)
-9. [Postman Testing](#postman-testing)
-10. [Running Backend Tests](#running-backend-tests)
-11. [Known Limitations](#known-limitations)
-12. [Future Enhancements](#future-enhancements)
-13. [Author](#author)
+Add, view, update, delete
+Search by name/code/email
+Filter by department, role, status
+Sortable columns
+Departments & Roles
 
----
+Add / update
+See how many employees are in each one
+Dashboard
 
-## Project Overview
+Headcount (total / active / inactive), department & role counts, average salary
+Employees-by-department breakdown
+Recently added employees
+Stack
+Frontend — Angular, TypeScript, Angular Router, Angular HttpClient, plain CSS Backend — Java 21, Spring Boot, JDBC (no ORM), Bean Validation, Maven Database — MySQL
 
-PeopleDesk is an internal HR-style tool for managing employees, departments
-and roles. It's deliberately scoped to a **realistic, explainable MVP**
-rather than an over-engineered showcase: three related MySQL tables, a
-layered Spring Boot backend built on **hand-written JDBC** (no
-Hibernate/JPA), and an Angular frontend that talks to it entirely through REST.
+Built and tested with IntelliJ IDEA, VS Code, MySQL Workbench, Postman, and Git.
 
-The goal is a project you can open in an interview and explain, line by
-line, from a button click in the browser all the way down to the SQL that
-runs against MySQL.
+How it's wired together
+Angular  →  Spring Boot Controller  →  Service  →  DAO (JDBC)  →  MySQL
+Every layer is a plain class you can step through — the DAO package has the raw SQL, no magic query generation.
 
-## Features
-
-- **Employee management**: create, view, update, delete, search, filter
-  (by department / role / status) and sort employees.
-
-- **Department management**: list, add, update, delete departments; view employee
-  count per department.
-
-- **Role management**: list, add, update, delete roles; view employee count per role.
-
-- **Dashboard**: total/active/inactive employee counts, department and role
-  counts, average salary, employees-by-department breakdown, and a recent
-  employees feed — all computed live from the database.
-
-- **Validation & error handling**: field-level validation (required fields,
-  email/phone format, positive salary) plus business-rule validation
-  (duplicate employee code/email, invalid department/role reference),
-  surfaced as clear, user-friendly messages in the UI.
-
-- **Responsive UI**: works across desktop, laptop, tablet and mobile, with a
-  collapsible sidebar and mobile navigation.
-
-## Technology Stack
-
-**Backend:** Java 21 · Spring Boot 3 · Maven · JDBC (`Connection` /
-`PreparedStatement` / `ResultSet`) · REST APIs · Bean Validation
-
-**Database:** MySQL · SQL (DDL/DML, joins, indexes, constraints)
-
-**Frontend:** Angular 21 · TypeScript · HTML5 · CSS3 · Angular Router ·
-Angular HttpClient · Angular CLI
-
-**Tools:** IntelliJ IDEA Community Edition (backend) · VS Code (frontend) ·
-MySQL Workbench · Postman · Git / GitHub
-
-**Explicitly not used** (see [Known Limitations](#known-limitations)):
-
-Spring Security, JWT, Spring Data JPA, Hibernate, microservices, Docker,
-Kubernetes, Kafka, Redis, any cloud provider.
-
-## Architecture
-
-```text
-Angular (HttpClient) -> Spring Boot Controller -> Service -> DAO -> JDBC -> MySQL
-
-Full explanation with request walkthroughs: docs/architecture.md
-
-Folder Structure
+Project layout
 employee-management-system/
-
-├── backend/                     Spring Boot + JDBC REST API
-│   ├── pom.xml
+├── backend/          Spring Boot API
 │   └── src/main/java/com/employeemanagement/
-│       ├── EmployeeManagementApplication.java
-│       ├── controller/          REST endpoints (thin, no business logic)
-│       ├── service/ + impl/     Business rules, validation, Streams
-│       ├── dao/ + impl/         Raw JDBC data access
-│       ├── model/               Domain entities
-│       ├── dto/                 Request/response payloads
-│       ├── exception/           Custom exceptions + GlobalExceptionHandler
-│       └── config/              CORS configuration
-│
-├── frontend/                    Angular SPA
+│       ├── controller/
+│       ├── service/
+│       ├── dao/
+│       ├── model/
+│       ├── dto/
+│       ├── exception/
+│       └── config/
+├── frontend/         Angular app
 │   └── src/app/
-│       ├── core/
-│       │   ├── models/          TypeScript interfaces mirroring backend DTOs
-│       │   ├── services/        HttpClient services + error interceptor
-│       │   └── utils/           Formatting helpers
-│       ├── shared/components/   Layout, Sidebar, Topbar, tables, dialogs, icons
-│       ├── pages/               Dashboard, Employees, Departments, Roles
-│       ├── app.routes.ts
-│       └── app.config.ts
-│   └── src/environments/        Dev/prod API base URL config
-│
-├── database/
-│   ├── schema.sql               Tables, constraints, indexes
-│   └── data.sql                 Sample departments/roles/employees
-│
-├── postman/
-│   └── Employee-Management-API.postman_collection.json
-│
+│       ├── core/       services, models, interceptor
+│       ├── shared/     reusable components (sidebar, tables, dialogs...)
+│       └── pages/      dashboard, employees, departments, roles
+├── database/         schema.sql + data.sql
 ├── docs/
-│   ├── architecture.md
-│   ├── database-design.md
-│   ├── api-documentation.md
-│   └── interview-questions.md
-│
-├── .gitignore
+├── postman/
 └── README.md
-Database Design
+Database
+Three tables — employees, departments, roles — linked by foreign keys. Scripts are in database/.
 
-3 tables (departments, roles, employees) with foreign keys, unique
-constraints and indexes.
+Running it locally
+You'll need: JDK 21, MySQL, Node.js + npm, Angular CLI, Maven.
 
-Full details: docs/database-design.md
+1. Set up the database
 
-API Documentation
-
-Full endpoint list, request/response examples and status codes:
-
-docs/api-documentation.md
-
-Setup Instructions
-Prerequisites
-JDK 21
-Maven 3.8+ (or use the included wrapper if you add one)
-MySQL 8.x, running locally
-Node.js 20.19+ / 22.12+ and npm
-Angular CLI (npm install -g @angular/cli) — or just use npx ng
-Postman (optional, for API testing)
-1. MySQL Configuration
-
-Create the database and load sample data:
-
+bash
 mysql -u root -p < database/schema.sql
 mysql -u root -p < database/data.sql
+2. Backend
 
-This creates the employee_management database with the original seed data:
+Set your MySQL credentials in backend/src/main/resources/application.properties (or via the DB_URL / DB_USERNAME / DB_PASSWORD env vars — that's what the properties file actually reads from), then:
 
-5 departments
-5 roles
-15 fictional sample employees
-
-Additional records may exist in the local development database from
-development and testing.
-
-2. Backend Setup
-
-The backend reads its DB credentials from environment variables (falling
-back to local development configuration — see
-backend/src/main/resources/application.properties).
-
-For local development, configure the following environment variables:
-
+bash
 cd backend
-
-export DB_URL="jdbc:mysql://localhost:3306/employee_management?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
-export DB_USERNAME=root
-export DB_PASSWORD=your_mysql_password
-
-Build and run:
-
-mvn clean install
 mvn spring-boot:run
+Runs on http://localhost:8080.
 
-The API starts on:
+3. Frontend
 
-http://localhost:8080
-
-Verify it is running:
-
-curl http://localhost:8080/api/departments
-
-Import the project into IntelliJ IDEA as a Maven project if you prefer
-running EmployeeManagementApplication.java directly from the IDE.
-
-3. Frontend Setup
+bash
 cd frontend
 npm install
 ng serve
+Runs on http://localhost:4200 and talks to the backend automatically (see src/environments/environment.ts for the API URL).
 
-The development application starts on:
+Heads up: if you ever serve a production build from a different port (I hit this running dist/ on port 5000), you'll need to add that origin to app.cors.allowed-origins in application.properties, or the browser will block the API calls with a CORS error and the app will just show a generic "can't reach the server" message.
 
-http://localhost:4200
+Testing the API directly
+There's a Postman collection in postman/ covering all the Employee/Department/Role/Dashboard endpoints, if you want to poke the backend without the UI.
 
-The development frontend uses the API URL configured in:
-
-src/environments/environment.ts
-
-Default local API URL:
-
-http://localhost:8080/api
-
-4. Production Build
-
-To create a production build of the Angular frontend:
-
-cd frontend
-ng build
-
-The production build is generated in the dist/ directory.
-
-The production build uses the API URL configured in:
-
-src/environments/environment.prod.ts
-
-Before deployment, this URL must be changed from the local Spring Boot
-backend URL to the public URL of the deployed backend.
-
-For local production-build testing, the generated Angular application can be
-served using a static server such as http-server.
-
-Example:
-
-npx http-server dist/frontend/browser -p 5000
-
-The production build can then be opened at:
-
-http://localhost:5000
-
-The production build must be tested against a running backend before deployment.
-
-5. Open the App
-
-For normal local development, visit:
-
-http://localhost:4200
-
-You should land on the Dashboard showing the data currently loaded from MySQL.
-
-The original seed data contains 15 sample employees. Additional employees,
-departments, and roles may exist in the local development database because of
-development and CRUD testing.
-
-Postman Testing
-Open Postman → Import → select
-postman/Employee-Management-API.postman_collection.json.
-The collection uses a baseUrl variable (defaults to
-http://localhost:8080/api) plus employeeId / departmentId /
-roleId variables you can update to match real ids in your database.
-Folders: Employees, Departments, Roles, Dashboard — each
-with realistic request bodies, including examples that intentionally
-trigger a 409 Conflict (duplicate employee code) and a 400 Bad Request
-(validation failure) so you can see the error-handling contract in action.
-Running Backend Tests
+Running backend tests
+bash
 cd backend
 mvn test
+What I'd add next
+Didn't get to these, but they'd be the obvious next steps:
 
-EmployeeServiceImplTest covers employee creation, retrieval, update,
-deletion, not-found handling, duplicate detection and status-filter
-validation, using Mockito to isolate the service layer from the database.
-
-Known Limitations
-No authentication/authorization — this is an internal MVP scoped to
-CRUD + search/filter/sort; anyone with network access to the API can call
-it. Adding login would mean introducing Spring Security/JWT, which was
-intentionally excluded from this phase.
-No pagination — GET /employees returns the full result set. Fine at
-demo scale (tens of rows); would need LIMIT/OFFSET (or keyset
-pagination) at real scale.
-No file/photo uploads, attendance, or leave management — out of scope
-for this MVP (see Future Enhancements).
-Single-tenant, single-environment config — application.properties
-assumes one MySQL instance; no per-environment profiles beyond env-var
-overrides.
-Future Enhancements
-Authentication & role-based access control (Spring Security + JWT)
-Pagination and server-side infinite scroll for large employee lists
-Employee attendance and leave management modules
-Audit log of who changed what and when
-Export employee list to Excel/CSV
-Email notifications (e.g. on employee creation)
-Migrate to Spring Data JPA once the team is comfortable with the JDBC
-fundamentals demonstrated here
-Containerize with Docker for easier deployment
-
+Login/auth (right now anyone can hit the API)
+Pagination — fine for 15 employees, wouldn't be for 15,000
+Attendance & leave tracking
+Audit log of who changed what
+Export to CSV/Excel
+Email notifications
 Author
+Manvendra Chaturvedi — Java Full Stack Developer
 
-Built by Manvendra Chaturvedi — Frontend/Full Stack Developer, targeting
-Java Full Stack Developer roles (Infosys and similar). Portfolio project
-demonstrating Java, JDBC, Spring Boot REST APIs, MySQL and Angular
-fundamentals.
+
