@@ -6,5 +6,5 @@
 // Spring Boot backend, e.g. 'https://your-backend.onrender.com/api'.
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:8080/api',
+  apiBaseUrl: 'https://employee-management-system-7za3.onrender.com/api',
 };
